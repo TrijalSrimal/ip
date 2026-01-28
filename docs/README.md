@@ -10,19 +10,36 @@ Encik is a personal assistant chatbot that helps you manage your tasks and more.
 
 ## Features
 
-### Echo
+### Add Task
 
-Encik echoes back any text you type.
+Add a task by typing any text. Encik will store it and confirm the addition.
 
 Example:
 ```
-hello world
+read book
 ```
 
 Expected output:
 ```
 ------------------------------------------------------------
-hello world
+added: read book
+------------------------------------------------------------
+```
+
+### List Tasks
+
+Type `list` to display all stored tasks with numbered indices.
+
+Example:
+```
+list
+```
+
+Expected output:
+```
+------------------------------------------------------------
+1. read book
+2. return book
 ------------------------------------------------------------
 ```
 
