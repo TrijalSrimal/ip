@@ -3,7 +3,7 @@ import java.util.Scanner;
 //main class
 public class Encik {
     // Fixed size array to store tasks (max 100 as per assignment)
-    private static String[] tasks = new String[100];
+    private static Task[] tasks = new Task[100];
     private static int taskCount = 0;
 
     public static void main(String[] args) {
@@ -20,19 +20,36 @@ public class Encik {
         String input;
         while (true) {
             input = scanner.nextLine();
-            
+
             if (input.equalsIgnoreCase("bye")) {
                 break;
             } else if (input.equalsIgnoreCase("list")) {
                 // List all tasks
                 printLine('-', 60);
+                System.out.println("Here are the tasks in your list:");
                 for (int i = 0; i < taskCount; i++) {
-                    System.out.println((i + 1) + ". " + tasks[i]);
+                    System.out.println((i + 1) + "." + tasks[i]);
                 }
+                printLine('-', 60);
+            } else if (input.toLowerCase().startsWith("mark ")) {
+                // Mark task as done
+                int taskIndex = Integer.parseInt(input.substring(5)) - 1;
+                tasks[taskIndex].markAsDone();
+                printLine('-', 60);
+                System.out.println("Nice! I've marked this task as done:");
+                System.out.println("  " + tasks[taskIndex]);
+                printLine('-', 60);
+            } else if (input.toLowerCase().startsWith("unmark ")) {
+                // Mark task as not done
+                int taskIndex = Integer.parseInt(input.substring(7)) - 1;
+                tasks[taskIndex].markAsNotDone();
+                printLine('-', 60);
+                System.out.println("OK, I've marked this task as not done yet:");
+                System.out.println("  " + tasks[taskIndex]);
                 printLine('-', 60);
             } else {
                 // Add task
-                tasks[taskCount] = input;
+                tasks[taskCount] = new Task(input);
                 taskCount++;
                 printLine('-', 60);
                 System.out.println("added: " + input);
@@ -48,7 +65,7 @@ public class Encik {
         scanner.close();
     }
 
-    //function to print a line of characters
+    // function to print a line of characters
     public static void printLine(char ch, int length) {
         for (int i = 0; i < length; i++) {
             System.out.print(ch);

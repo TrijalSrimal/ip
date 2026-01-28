@@ -28,7 +28,7 @@ added: read book
 
 ### List Tasks
 
-Type `list` to display all stored tasks with numbered indices.
+Type `list` to display all stored tasks with status icons.
 
 Example:
 ```
@@ -38,8 +38,44 @@ list
 Expected output:
 ```
 ------------------------------------------------------------
-1. read book
-2. return book
+Here are the tasks in your list:
+1.[X] read book
+2.[ ] return book
+3.[ ] buy bread
+------------------------------------------------------------
+```
+
+### Mark Task as Done
+
+Type `mark <task number>` to mark a task as done.
+
+Example:
+```
+mark 2
+```
+
+Expected output:
+```
+------------------------------------------------------------
+Nice! I've marked this task as done:
+  [X] return book
+------------------------------------------------------------
+```
+
+### Unmark Task
+
+Type `unmark <task number>` to mark a task as not done.
+
+Example:
+```
+unmark 2
+```
+
+Expected output:
+```
+------------------------------------------------------------
+OK, I've marked this task as not done yet:
+  [ ] return book
 ------------------------------------------------------------
 ```
 
