@@ -1,93 +1,73 @@
 # Encik User Guide
 
-Encik is a personal assistant chatbot that helps you manage your tasks and more.
+Encik is a task manager chatbot that helps you track todos, deadlines, and events.
 
 ## Quick Start
 
 1. Ensure you have Java 17 installed
-2. Compile: `javac src/main/java/Encik.java -d out`
-3. Run: `java -cp out Encik`
+2. Compile: `cd src/main/java && javac *.java`
+3. Run: `java Encik`
 
-## Features
+## Commands
 
-### Add Task
+| Command | Format | Example |
+|---------|--------|---------|
+| Todo | `todo <desc>` | `todo read book` |
+| Deadline | `deadline <desc> /by <date>` | `deadline essay /by Sunday` |
+| Event | `event <desc> /from <start> /to <end>` | `event meeting /from 2pm /to 4pm` |
+| List | `list` | `list` |
+| Mark | `mark <n>` | `mark 1` |
+| Unmark | `unmark <n>` | `unmark 1` |
+| Exit | `bye` | `bye` |
 
-Add a task by typing any text. Encik will store it and confirm the addition.
+## Examples
 
-Example:
+### Add Todo
 ```
-read book
-```
-
-Expected output:
-```
+todo read book
 ------------------------------------------------------------
-added: read book
+Got it. I've added this task:
+  [T][ ] read book
+Now you have 1 tasks in the list.
+------------------------------------------------------------
+```
+
+### Add Deadline
+```
+deadline return book /by Sunday
+------------------------------------------------------------
+Got it. I've added this task:
+  [D][ ] return book (by: Sunday)
+Now you have 2 tasks in the list.
+------------------------------------------------------------
+```
+
+### Add Event
+```
+event meeting /from Mon 2pm /to 4pm
+------------------------------------------------------------
+Got it. I've added this task:
+  [E][ ] meeting (from: Mon 2pm to: 4pm)
+Now you have 3 tasks in the list.
 ------------------------------------------------------------
 ```
 
 ### List Tasks
-
-Type `list` to display all stored tasks with status icons.
-
-Example:
 ```
 list
-```
-
-Expected output:
-```
 ------------------------------------------------------------
 Here are the tasks in your list:
-1.[X] read book
-2.[ ] return book
-3.[ ] buy bread
+1.[T][ ] read book
+2.[D][ ] return book (by: Sunday)
+3.[E][ ] meeting (from: Mon 2pm to: 4pm)
 ------------------------------------------------------------
 ```
 
-### Mark Task as Done
-
-Type `mark <task number>` to mark a task as done.
-
-Example:
+### Mark/Unmark
 ```
-mark 2
-```
-
-Expected output:
-```
+mark 1
 ------------------------------------------------------------
 Nice! I've marked this task as done:
-  [X] return book
-------------------------------------------------------------
-```
-
-### Unmark Task
-
-Type `unmark <task number>` to mark a task as not done.
-
-Example:
-```
-unmark 2
-```
-
-Expected output:
-```
-------------------------------------------------------------
-OK, I've marked this task as not done yet:
-  [ ] return book
-------------------------------------------------------------
-```
-
-### Exit
-
-Type `bye` (case-insensitive) to exit the program.
-
-Example: `bye`, `BYE`, or `Bye`
-
-Expected output:
-```
-------------------------------------------------------------
-Bye. Hope to see you again soon!
+  [T][X] read book
 ------------------------------------------------------------
 ```

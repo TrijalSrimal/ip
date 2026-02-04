@@ -23,4 +23,7 @@ Java coding standard_files/
 
 # Agent context
 .agent-context.md
+
+# Reference documents
+CS2113 - Code Quality.pdf
 *.class

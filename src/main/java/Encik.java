@@ -1,9 +1,11 @@
 import java.util.Scanner;
 
-//main class
+/**
+ * Main class for Encik task manager chatbot.
+ */
 public class Encik {
-    // Fixed size array to store tasks (max 100 as per assignment)
-    private static Task[] tasks = new Task[100];
+    private static final int MAX_TASKS = 100;
+    private static Task[] tasks = new Task[MAX_TASKS];
     private static int taskCount = 0;
 
     public static void main(String[] args) {
@@ -103,7 +105,12 @@ public class Encik {
         scanner.close();
     }
 
-    // function to print a line of characters
+    /**
+     * Prints a line of repeated characters.
+     *
+     * @param ch The character to repeat.
+     * @param length The number of times to repeat the character.
+     */
     public static void printLine(char ch, int length) {
         for (int i = 0; i < length; i++) {
             System.out.print(ch);
