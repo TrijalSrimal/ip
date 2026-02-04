@@ -47,12 +47,50 @@ public class Encik {
                 System.out.println("OK, I've marked this task as not done yet:");
                 System.out.println("  " + tasks[taskIndex]);
                 printLine('-', 60);
-            } else {
-                // Add task
-                tasks[taskCount] = new Task(input);
+            } else if (input.toLowerCase().startsWith("todo ")) {
+                // Add Todo task
+                String description = input.substring(5);
+                tasks[taskCount] = new Todo(description);
                 taskCount++;
                 printLine('-', 60);
-                System.out.println("added: " + input);
+                System.out.println("Got it. I've added this task:");
+                System.out.println("  " + tasks[taskCount - 1]);
+                System.out.println("Now you have " + taskCount + " tasks in the list.");
+                printLine('-', 60);
+            } else if (input.toLowerCase().startsWith("deadline ")) {
+                // Add Deadline task: deadline <desc> /by <date>
+                String content = input.substring(9);
+                String[] parts = content.split(" /by ");
+                String description = parts[0];
+                String by = parts[1];
+                tasks[taskCount] = new Deadline(description, by);
+                taskCount++;
+                printLine('-', 60);
+                System.out.println("Got it. I've added this task:");
+                System.out.println("  " + tasks[taskCount - 1]);
+                System.out.println("Now you have " + taskCount + " tasks in the list.");
+                printLine('-', 60);
+            } else if (input.toLowerCase().startsWith("event ")) {
+                // Add Event task: event <desc> /from <start> /to <end>
+                String content = input.substring(6);
+                String[] parts = content.split(" /from ");
+                String description = parts[0];
+                String[] timeParts = parts[1].split(" /to ");
+                String from = timeParts[0];
+                String to = timeParts[1];
+                tasks[taskCount] = new Event(description, from, to);
+                taskCount++;
+                printLine('-', 60);
+                System.out.println("Got it. I've added this task:");
+                System.out.println("  " + tasks[taskCount - 1]);
+                System.out.println("Now you have " + taskCount + " tasks in the list.");
+                printLine('-', 60);
+            } else {
+                // Unknown command
+                printLine('-', 60);
+                System.out.println("Unknown command. Try:");
+                System.out.println("  list | todo | deadline /by | event /from /to");
+                System.out.println("  mark <n> | unmark <n> | bye");
                 printLine('-', 60);
             }
         }

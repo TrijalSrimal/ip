@@ -23,3 +23,4 @@ Java coding standard_files/
 
 # Agent context
 .agent-context.md
+*.class
