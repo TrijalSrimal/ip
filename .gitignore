@@ -15,3 +15,11 @@ bin/
 
 /text-ui-test/ACTUAL.TXT
 text-ui-test/EXPECTED-UNIX.TXT
+
+# Coding Standards
+coding_standards.txt
+Java coding standard.html
+Java coding standard_files/
+
+# Agent context
+.agent-context.md
