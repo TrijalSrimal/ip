@@ -9,6 +9,7 @@ Encik is a task manager chatbot that helps you track your todos, deadlines, and 
 - **Event** - Tasks with start and end times
 - Mark/unmark tasks as done
 - List all tasks
+- Supports up to 100 tasks
 
 ## Usage
 
@@ -21,6 +22,14 @@ mark <n>                        - Mark task n as done
 unmark <n>                      - Unmark task n
 bye                             - Exit
 ```
+
+## Error Handling
+
+Encik provides helpful error messages for invalid inputs:
+- Unknown commands display available commands
+- Empty descriptions are rejected with usage hints
+- Invalid task indices show the correct format
+- Task list full (max 100) warns user
 
 ## Running
 

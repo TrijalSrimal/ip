@@ -71,3 +71,41 @@ Nice! I've marked this task as done:
   [T][X] read book
 ------------------------------------------------------------
 ```
+
+## Error Handling
+
+Encik validates all inputs and provides helpful error messages:
+
+### Unknown Command
+```
+blah
+------------------------------------------------------------
+OOPS!!! I'm sorry, but I don't know what that means :-(
+Available commands: todo, deadline, event, list, mark, unmark, bye
+------------------------------------------------------------
+```
+
+### Empty Description
+```
+todo
+------------------------------------------------------------
+OOPS!!! The description of a todo cannot be empty.
+Usage: todo <description>
+------------------------------------------------------------
+```
+
+### Invalid Task Index
+```
+mark 100
+------------------------------------------------------------
+OOPS!!! Invalid task index.
+Usage: mark <index>
+------------------------------------------------------------
+```
+
+### Task List Full
+```
+------------------------------------------------------------
+OOPS!!! Task list is full (max 100 tasks).
+------------------------------------------------------------
+```

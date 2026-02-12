@@ -12,11 +12,11 @@ public class Encik {
     // Command Constants
     private static final String COMMAND_BYE = "bye";
     private static final String COMMAND_LIST = "list";
-    private static final String COMMAND_MARK = "mark ";
-    private static final String COMMAND_UNMARK = "unmark ";
-    private static final String COMMAND_TODO = "todo ";
-    private static final String COMMAND_DEADLINE = "deadline ";
-    private static final String COMMAND_EVENT = "event ";
+    private static final String COMMAND_MARK = "mark";
+    private static final String COMMAND_UNMARK = "unmark";
+    private static final String COMMAND_TODO = "todo";
+    private static final String COMMAND_DEADLINE = "deadline";
+    private static final String COMMAND_EVENT = "event";
 
     // Task Syntax Markers
     private static final String DEADLINE_BY = " /by ";
@@ -44,11 +44,17 @@ public class Encik {
     private static void runCommandLoop() {
         Scanner scanner = new Scanner(System.in);
         while (true) {
-            String input = scanner.nextLine();
+            String input = scanner.nextLine().trim();
             if (input.equalsIgnoreCase(COMMAND_BYE)) {
                 break;
             }
-            handleCommand(input);
+            try {
+                handleCommand(input);
+            } catch (EncikException e) {
+                printLine(LINE_SEPARATOR, LINE_LENGTH);
+                System.out.println(e.getMessage());
+                printLine(LINE_SEPARATOR, LINE_LENGTH);
+            }
         }
         scanner.close();
     }
@@ -57,22 +63,27 @@ public class Encik {
      * Handles a single user command.
      *
      * @param input The raw input string from the user.
+     * @throws EncikException If the command is unknown or invalid.
      */
-    private static void handleCommand(String input) {
-        if (input.equalsIgnoreCase(COMMAND_LIST)) {
+    private static void handleCommand(String input) throws EncikException {
+        String[] p = input.trim().split("\\s+", 2);
+        String command = p[0].toLowerCase();
+
+        if (command.equals(COMMAND_LIST)) {
             listTasks();
-        } else if (input.toLowerCase().startsWith(COMMAND_MARK)) {
+        } else if (command.equals(COMMAND_MARK)) {
             markTask(input);
-        } else if (input.toLowerCase().startsWith(COMMAND_UNMARK)) {
+        } else if (command.equals(COMMAND_UNMARK)) {
             unmarkTask(input);
-        } else if (input.toLowerCase().startsWith(COMMAND_TODO)) {
+        } else if (command.equals(COMMAND_TODO)) {
             addTodo(input);
-        } else if (input.toLowerCase().startsWith(COMMAND_DEADLINE)) {
+        } else if (command.equals(COMMAND_DEADLINE)) {
             addDeadline(input);
-        } else if (input.toLowerCase().startsWith(COMMAND_EVENT)) {
+        } else if (command.equals(COMMAND_EVENT)) {
             addEvent(input);
         } else {
-            printUnknownCommand();
+            throw new EncikException(
+                    "OOPS!!! I'm sorry, but I don't know what that means :-(\nAvailable commands: todo, deadline, event, list, mark, unmark, bye");
         }
     }
 
@@ -92,6 +103,11 @@ public class Encik {
      */
     private static void listTasks() {
         printLine(LINE_SEPARATOR, LINE_LENGTH);
+        if (taskCount == 0) {
+            System.out.println("There are no tasks in your list.");
+            printLine(LINE_SEPARATOR, LINE_LENGTH);
+            return;
+        }
         System.out.println("Here are the tasks in your list:");
         for (int i = 0; i < taskCount; i++) {
             System.out.println((i + 1) + "." + tasks[i]);
@@ -103,41 +119,58 @@ public class Encik {
      * Marks a task as done.
      *
      * @param input The user input containing mark command and task index.
+     * @throws EncikException If the index is missing or invalid.
      */
-    private static void markTask(String input) {
-        int taskIndex = parseTaskIndex(input, COMMAND_MARK.length());
-        if (isValidIndex(taskIndex)) {
-            tasks[taskIndex].markAsDone();
-            printLine(LINE_SEPARATOR, LINE_LENGTH);
-            System.out.println("Nice! I've marked this task as done:");
-            System.out.println("  " + tasks[taskIndex]);
-            printLine(LINE_SEPARATOR, LINE_LENGTH);
+    private static void markTask(String input) throws EncikException {
+        if (input.trim().equalsIgnoreCase(COMMAND_MARK)) {
+            throw new EncikException("OOPS!!! Invalid task index.\nUsage: mark <index>");
         }
+        int taskIndex = parseTaskIndex(input, COMMAND_MARK.length());
+        if (!isValidIndex(taskIndex)) {
+            throw new EncikException("OOPS!!! Invalid task index.\nUsage: mark <index>");
+        }
+        tasks[taskIndex].markAsDone();
+        printLine(LINE_SEPARATOR, LINE_LENGTH);
+        System.out.println("Nice! I've marked this task as done:");
+        System.out.println("  " + tasks[taskIndex]);
+        printLine(LINE_SEPARATOR, LINE_LENGTH);
     }
 
     /**
      * Marks a task as not done.
      *
      * @param input The user input containing unmark command and task index.
+     * @throws EncikException If the index is missing or invalid.
      */
-    private static void unmarkTask(String input) {
-        int taskIndex = parseTaskIndex(input, COMMAND_UNMARK.length());
-        if (isValidIndex(taskIndex)) {
-            tasks[taskIndex].markAsNotDone();
-            printLine(LINE_SEPARATOR, LINE_LENGTH);
-            System.out.println("OK, I've marked this task as not done yet:");
-            System.out.println("  " + tasks[taskIndex]);
-            printLine(LINE_SEPARATOR, LINE_LENGTH);
+    private static void unmarkTask(String input) throws EncikException {
+        if (input.trim().equalsIgnoreCase(COMMAND_UNMARK)) {
+            throw new EncikException("OOPS!!! Invalid task index.\nUsage: unmark <index>");
         }
+        int taskIndex = parseTaskIndex(input, COMMAND_UNMARK.length());
+        if (!isValidIndex(taskIndex)) {
+            throw new EncikException("OOPS!!! Invalid task index.\nUsage: unmark <index>");
+        }
+        tasks[taskIndex].markAsNotDone();
+        printLine(LINE_SEPARATOR, LINE_LENGTH);
+        System.out.println("OK, I've marked this task as not done yet:");
+        System.out.println("  " + tasks[taskIndex]);
+        printLine(LINE_SEPARATOR, LINE_LENGTH);
     }
 
     /**
      * Adds a Todo task.
      *
      * @param input The user input containing todo command and description.
+     * @throws EncikException If the description is empty.
      */
-    private static void addTodo(String input) {
-        String description = input.substring(COMMAND_TODO.length());
+    private static void addTodo(String input) throws EncikException {
+        if (input.trim().equalsIgnoreCase(COMMAND_TODO)) {
+            throw new EncikException("OOPS!!! The description of a todo cannot be empty.\nUsage: todo <description>");
+        }
+        String description = input.substring(COMMAND_TODO.length()).trim();
+        if (description.isEmpty()) {
+            throw new EncikException("OOPS!!! The description of a todo cannot be empty.\nUsage: todo <description>");
+        }
         addTask(new Todo(description));
     }
 
@@ -146,17 +179,26 @@ public class Encik {
      *
      * @param input The user input containing deadline command, description and by
      *              date.
+     * @throws EncikException If the format is invalid.
      */
-    private static void addDeadline(String input) {
+    private static void addDeadline(String input) throws EncikException {
+        if (input.trim().equalsIgnoreCase(COMMAND_DEADLINE)) {
+            throw new EncikException("OOPS!!! Invalid deadline format.\nUsage: deadline <desc> /by <date>");
+        }
         String content = input.substring(COMMAND_DEADLINE.length());
         String[] parts = content.split(DEADLINE_BY);
         if (parts.length < 2) {
-            System.out.println("Usage: deadline <desc> /by <date>");
-            return;
+            throw new EncikException("OOPS!!! Invalid deadline format.\nUsage: deadline <desc> /by <date>");
         }
 
-        String description = parts[0];
-        String by = parts[1];
+        String description = parts[0].trim();
+        String by = parts[1].trim();
+
+        if (description.isEmpty() || by.isEmpty()) {
+            throw new EncikException(
+                    "OOPS!!! The description or date cannot be empty.\nUsage: deadline <desc> /by <date>");
+        }
+
         addTask(new Deadline(description, by));
     }
 
@@ -165,24 +207,32 @@ public class Encik {
      *
      * @param input The user input containing event command, description, from and
      *              to dates.
+     * @throws EncikException If the format is invalid.
      */
-    private static void addEvent(String input) {
+    private static void addEvent(String input) throws EncikException {
+        if (input.trim().equalsIgnoreCase(COMMAND_EVENT)) {
+            throw new EncikException("OOPS!!! Invalid event format.\nUsage: event <desc> /from <start> /to <end>");
+        }
         String content = input.substring(COMMAND_EVENT.length());
         String[] parts = content.split(EVENT_FROM);
         if (parts.length < 2) {
-            System.out.println("Usage: event <desc> /from <start> /to <end>");
-            return;
+            throw new EncikException("OOPS!!! Invalid event format.\nUsage: event <desc> /from <start> /to <end>");
         }
 
-        String description = parts[0];
+        String description = parts[0].trim();
         String[] timeParts = parts[1].split(EVENT_TO);
         if (timeParts.length < 2) {
-            System.out.println("Usage: event <desc> /from <start> /to <end>");
-            return;
+            throw new EncikException("OOPS!!! Invalid event format.\nUsage: event <desc> /from <start> /to <end>");
         }
 
-        String from = timeParts[0];
-        String to = timeParts[1];
+        String from = timeParts[0].trim();
+        String to = timeParts[1].trim();
+
+        if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
+            throw new EncikException(
+                    "OOPS!!! The description or time cannot be empty.\nUsage: event <desc> /from <start> /to <end>");
+        }
+
         addTask(new Event(description, from, to));
     }
 
@@ -190,8 +240,12 @@ public class Encik {
      * Adds a task to the list and prints confirmation.
      *
      * @param task The task to add.
+     * @throws EncikException If the task list is full.
      */
-    private static void addTask(Task task) {
+    private static void addTask(Task task) throws EncikException {
+        if (taskCount >= MAX_TASKS) {
+            throw new EncikException("OOPS!!! Task list is full (max " + MAX_TASKS + " tasks).");
+        }
         tasks[taskCount] = task;
         taskCount++;
         printLine(LINE_SEPARATOR, LINE_LENGTH);
@@ -211,17 +265,6 @@ public class Encik {
     }
 
     /**
-     * Prints message for unknown command.
-     */
-    private static void printUnknownCommand() {
-        printLine(LINE_SEPARATOR, LINE_LENGTH);
-        System.out.println("Unknown command. Try:");
-        System.out.println("  list | todo | deadline /by | event /from /to");
-        System.out.println("  mark <n> | unmark <n> | bye");
-        printLine(LINE_SEPARATOR, LINE_LENGTH);
-    }
-
-    /**
      * Parses the task index from user input.
      * 
      * @param input         The user input.
@@ -230,7 +273,7 @@ public class Encik {
      */
     private static int parseTaskIndex(String input, int commandLength) {
         try {
-            return Integer.parseInt(input.substring(commandLength)) - 1;
+            return Integer.parseInt(input.substring(commandLength).trim()) - 1;
         } catch (NumberFormatException e) {
             return -1;
         }
