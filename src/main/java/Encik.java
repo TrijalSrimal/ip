@@ -1,11 +1,11 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
  * Main class for Encik task manager chatbot.
- * Hanldes user interaction and task management.
+ * Handles user interaction and task management.
  */
 public class Encik {
-    private static final int MAX_TASKS = 100;
     private static final int LINE_LENGTH = 60;
     private static final char LINE_SEPARATOR = '-';
 
@@ -17,14 +17,14 @@ public class Encik {
     private static final String COMMAND_TODO = "todo";
     private static final String COMMAND_DEADLINE = "deadline";
     private static final String COMMAND_EVENT = "event";
+    private static final String COMMAND_DELETE = "delete";
 
     // Task Syntax Markers
     private static final String DEADLINE_BY = " /by ";
     private static final String EVENT_FROM = " /from ";
     private static final String EVENT_TO = " /to ";
 
-    private static Task[] tasks = new Task[MAX_TASKS];
-    private static int taskCount = 0;
+    private static ArrayList<Task> tasks = new ArrayList<>();
 
     /**
      * Main entry point of the application.
@@ -81,9 +81,12 @@ public class Encik {
             addDeadline(input);
         } else if (command.equals(COMMAND_EVENT)) {
             addEvent(input);
+        } else if (command.equals(COMMAND_DELETE)) {
+            deleteTask(input);
         } else {
             throw new EncikException(
-                    "OOPS!!! I'm sorry, but I don't know what that means :-(\nAvailable commands: todo, deadline, event, list, mark, unmark, bye");
+                    "OOPS!!! I'm sorry, but I don't know what that means :-(\n"
+                            + "Available commands: todo, deadline, event, list, mark, unmark, delete, bye");
         }
     }
 
@@ -103,14 +106,14 @@ public class Encik {
      */
     private static void listTasks() {
         printLine(LINE_SEPARATOR, LINE_LENGTH);
-        if (taskCount == 0) {
+        if (tasks.isEmpty()) {
             System.out.println("There are no tasks in your list.");
             printLine(LINE_SEPARATOR, LINE_LENGTH);
             return;
         }
         System.out.println("Here are the tasks in your list:");
-        for (int i = 0; i < taskCount; i++) {
-            System.out.println((i + 1) + "." + tasks[i]);
+        for (int i = 0; i < tasks.size(); i++) {
+            System.out.println((i + 1) + "." + tasks.get(i));
         }
         printLine(LINE_SEPARATOR, LINE_LENGTH);
     }
@@ -129,10 +132,10 @@ public class Encik {
         if (!isValidIndex(taskIndex)) {
             throw new EncikException("OOPS!!! Invalid task index.\nUsage: mark <index>");
         }
-        tasks[taskIndex].markAsDone();
+        tasks.get(taskIndex).markAsDone();
         printLine(LINE_SEPARATOR, LINE_LENGTH);
         System.out.println("Nice! I've marked this task as done:");
-        System.out.println("  " + tasks[taskIndex]);
+        System.out.println("  " + tasks.get(taskIndex));
         printLine(LINE_SEPARATOR, LINE_LENGTH);
     }
 
@@ -150,10 +153,32 @@ public class Encik {
         if (!isValidIndex(taskIndex)) {
             throw new EncikException("OOPS!!! Invalid task index.\nUsage: unmark <index>");
         }
-        tasks[taskIndex].markAsNotDone();
+        tasks.get(taskIndex).markAsNotDone();
         printLine(LINE_SEPARATOR, LINE_LENGTH);
         System.out.println("OK, I've marked this task as not done yet:");
-        System.out.println("  " + tasks[taskIndex]);
+        System.out.println("  " + tasks.get(taskIndex));
+        printLine(LINE_SEPARATOR, LINE_LENGTH);
+    }
+
+    /**
+     * Deletes a task from the list.
+     *
+     * @param input The user input containing delete command and task index.
+     * @throws EncikException If the index is missing or invalid.
+     */
+    private static void deleteTask(String input) throws EncikException {
+        if (input.trim().equalsIgnoreCase(COMMAND_DELETE)) {
+            throw new EncikException("OOPS!!! Invalid task index.\nUsage: delete <index>");
+        }
+        int taskIndex = parseTaskIndex(input, COMMAND_DELETE.length());
+        if (!isValidIndex(taskIndex)) {
+            throw new EncikException("OOPS!!! Invalid task index.\nUsage: delete <index>");
+        }
+        Task removedTask = tasks.remove(taskIndex);
+        printLine(LINE_SEPARATOR, LINE_LENGTH);
+        System.out.println("Noted. I've removed this task:");
+        System.out.println("  " + removedTask);
+        System.out.println("Now you have " + tasks.size() + " tasks in the list.");
         printLine(LINE_SEPARATOR, LINE_LENGTH);
     }
 
@@ -240,18 +265,13 @@ public class Encik {
      * Adds a task to the list and prints confirmation.
      *
      * @param task The task to add.
-     * @throws EncikException If the task list is full.
      */
-    private static void addTask(Task task) throws EncikException {
-        if (taskCount >= MAX_TASKS) {
-            throw new EncikException("OOPS!!! Task list is full (max " + MAX_TASKS + " tasks).");
-        }
-        tasks[taskCount] = task;
-        taskCount++;
+    private static void addTask(Task task) {
+        tasks.add(task);
         printLine(LINE_SEPARATOR, LINE_LENGTH);
         System.out.println("Got it. I've added this task:");
-        System.out.println("  " + tasks[taskCount - 1]);
-        System.out.println("Now you have " + taskCount + " tasks in the list.");
+        System.out.println("  " + task);
+        System.out.println("Now you have " + tasks.size() + " tasks in the list.");
         printLine(LINE_SEPARATOR, LINE_LENGTH);
     }
 
@@ -266,7 +286,7 @@ public class Encik {
 
     /**
      * Parses the task index from user input.
-     * 
+     *
      * @param input         The user input.
      * @param commandLength The length of the command prefix to skip.
      * @return The 0-based index of the task.
@@ -281,12 +301,12 @@ public class Encik {
 
     /**
      * Checks if a task index is valid.
-     * 
+     *
      * @param index The index to check.
      * @return True if valid, false otherwise.
      */
     private static boolean isValidIndex(int index) {
-        return index >= 0 && index < taskCount;
+        return index >= 0 && index < tasks.size();
     }
 
     /**
