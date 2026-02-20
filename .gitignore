@@ -27,3 +27,4 @@ Java coding standard_files/
 # Reference documents
 CS2113 - Code Quality.pdf
 *.class
+data/
