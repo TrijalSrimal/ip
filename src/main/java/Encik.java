@@ -1,8 +1,11 @@
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Scanner;
 
 /**
  * Main class for Encik task manager chatbot.
- * Hanldes user interaction and task management.
+ * Handles user interaction and task management.
  */
 public class Encik {
     private static final int MAX_TASKS = 100;
@@ -23,6 +26,11 @@ public class Encik {
     private static final String EVENT_FROM = " /from ";
     private static final String EVENT_TO = " /to ";
 
+    // File Storage Constants
+    private static final String DATA_DIRECTORY = "data";
+    private static final String DATA_FILE_PATH = DATA_DIRECTORY + File.separator + "encik.txt";
+    private static final String FILE_DELIMITER = " | ";
+
     private static Task[] tasks = new Task[MAX_TASKS];
     private static int taskCount = 0;
 
@@ -32,6 +40,7 @@ public class Encik {
      * @param args Command line arguments (not used).
      */
     public static void main(String[] args) {
+        loadTasks();
         printWelcome();
         runCommandLoop();
         printExit();
@@ -83,7 +92,8 @@ public class Encik {
             addEvent(input);
         } else {
             throw new EncikException(
-                    "OOPS!!! I'm sorry, but I don't know what that means :-(\nAvailable commands: todo, deadline, event, list, mark, unmark, bye");
+                    "OOPS!!! I'm sorry, but I don't know what that means :-(\n"
+                            + "Available commands: todo, deadline, event, list, mark, unmark, bye");
         }
     }
 
@@ -130,6 +140,7 @@ public class Encik {
             throw new EncikException("OOPS!!! Invalid task index.\nUsage: mark <index>");
         }
         tasks[taskIndex].markAsDone();
+        saveTasks();
         printLine(LINE_SEPARATOR, LINE_LENGTH);
         System.out.println("Nice! I've marked this task as done:");
         System.out.println("  " + tasks[taskIndex]);
@@ -151,6 +162,7 @@ public class Encik {
             throw new EncikException("OOPS!!! Invalid task index.\nUsage: unmark <index>");
         }
         tasks[taskIndex].markAsNotDone();
+        saveTasks();
         printLine(LINE_SEPARATOR, LINE_LENGTH);
         System.out.println("OK, I've marked this task as not done yet:");
         System.out.println("  " + tasks[taskIndex]);
@@ -248,11 +260,133 @@ public class Encik {
         }
         tasks[taskCount] = task;
         taskCount++;
+        saveTasks();
         printLine(LINE_SEPARATOR, LINE_LENGTH);
         System.out.println("Got it. I've added this task:");
         System.out.println("  " + tasks[taskCount - 1]);
         System.out.println("Now you have " + taskCount + " tasks in the list.");
         printLine(LINE_SEPARATOR, LINE_LENGTH);
+    }
+
+    /**
+     * Saves all tasks to the data file.
+     * Creates the data directory if it does not exist.
+     * Format: TYPE | DONE | DESCRIPTION [| extra fields]
+     */
+    private static void saveTasks() {
+        File directory = new File(DATA_DIRECTORY);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        try {
+            FileWriter writer = new FileWriter(DATA_FILE_PATH);
+            for (int i = 0; i < taskCount; i++) {
+                writer.write(taskToFileString(tasks[i]) + System.lineSeparator());
+            }
+            writer.close();
+        } catch (IOException e) {
+            System.out.println("Warning: Unable to save tasks to file.");
+        }
+    }
+
+    /**
+     * Loads tasks from the data file.
+     * Handles missing file/directory and corrupted data gracefully.
+     */
+    private static void loadTasks() {
+        File file = new File(DATA_FILE_PATH);
+        if (!file.exists()) {
+            return;
+        }
+
+        try {
+            Scanner fileScanner = new Scanner(file);
+            while (fileScanner.hasNextLine()) {
+                String line = fileScanner.nextLine().trim();
+                if (line.isEmpty()) {
+                    continue;
+                }
+                try {
+                    Task task = parseTaskFromFile(line);
+                    if (taskCount < MAX_TASKS) {
+                        tasks[taskCount] = task;
+                        taskCount++;
+                    }
+                } catch (EncikException e) {
+                    System.out.println("Warning: Skipping corrupted line: " + line);
+                }
+            }
+            fileScanner.close();
+        } catch (IOException e) {
+            System.out.println("Warning: Unable to load tasks from file.");
+        }
+    }
+
+    /**
+     * Converts a task to its file storage string representation.
+     *
+     * @param task The task to convert.
+     * @return The file format string for the task.
+     */
+    private static String taskToFileString(Task task) {
+        String doneFlag = task.isDone ? "1" : "0";
+        if (task instanceof Todo) {
+            return "T" + FILE_DELIMITER + doneFlag + FILE_DELIMITER + task.description;
+        } else if (task instanceof Deadline) {
+            Deadline d = (Deadline) task;
+            return "D" + FILE_DELIMITER + doneFlag + FILE_DELIMITER + d.description
+                    + FILE_DELIMITER + d.by;
+        } else if (task instanceof Event) {
+            Event e = (Event) task;
+            return "E" + FILE_DELIMITER + doneFlag + FILE_DELIMITER + e.description
+                    + FILE_DELIMITER + e.from + FILE_DELIMITER + e.to;
+        }
+        return "";
+    }
+
+    /**
+     * Parses a task from a file storage line.
+     *
+     * @param line The line from the data file.
+     * @return The parsed Task object.
+     * @throws EncikException If the line format is corrupted.
+     */
+    private static Task parseTaskFromFile(String line) throws EncikException {
+        String[] parts = line.split(" \\| ");
+        if (parts.length < 3) {
+            throw new EncikException("Corrupted data");
+        }
+
+        String type = parts[0].trim();
+        boolean isDone = parts[1].trim().equals("1");
+        String description = parts[2].trim();
+
+        Task task;
+        switch (type) {
+            case "T":
+                task = new Todo(description);
+                break;
+            case "D":
+                if (parts.length < 4) {
+                    throw new EncikException("Corrupted deadline data");
+                }
+                task = new Deadline(description, parts[3].trim());
+                break;
+            case "E":
+                if (parts.length < 5) {
+                    throw new EncikException("Corrupted event data");
+                }
+                task = new Event(description, parts[3].trim(), parts[4].trim());
+                break;
+            default:
+                throw new EncikException("Unknown task type: " + type);
+        }
+
+        if (isDone) {
+            task.markAsDone();
+        }
+        return task;
     }
 
     /**
@@ -266,7 +400,7 @@ public class Encik {
 
     /**
      * Parses the task index from user input.
-     * 
+     *
      * @param input         The user input.
      * @param commandLength The length of the command prefix to skip.
      * @return The 0-based index of the task.
@@ -281,7 +415,7 @@ public class Encik {
 
     /**
      * Checks if a task index is valid.
-     * 
+     *
      * @param index The index to check.
      * @return True if valid, false otherwise.
      */
