@@ -18,6 +18,7 @@ Encik is a task manager chatbot that helps you track todos, deadlines, and event
 | List | `list` | `list` |
 | Mark | `mark <n>` | `mark 1` |
 | Unmark | `unmark <n>` | `unmark 1` |
+| Delete | `delete <n>` | `delete 3` |
 | Exit | `bye` | `bye` |
 
 ## Examples
@@ -72,6 +73,16 @@ Nice! I've marked this task as done:
 ------------------------------------------------------------
 ```
 
+### Delete Task
+```
+delete 3
+------------------------------------------------------------
+Noted. I've removed this task:
+  [E][ ] meeting (from: Mon 2pm to: 4pm)
+Now you have 2 tasks in the list.
+------------------------------------------------------------
+```
+
 ## Error Handling
 
 Encik validates all inputs and provides helpful error messages:
@@ -103,9 +114,11 @@ Usage: mark <index>
 ------------------------------------------------------------
 ```
 
-### Task List Full
+### Invalid Delete Index
 ```
+delete 100
 ------------------------------------------------------------
-OOPS!!! Task list is full (max 100 tasks).
+OOPS!!! Invalid task index.
+Usage: delete <index>
 ------------------------------------------------------------
 ```
