@@ -20,6 +20,24 @@ public class Event extends Task {
     }
 
     /**
+     * Returns the start time of the event.
+     *
+     * @return The "from" time string.
+     */
+    public String getFrom() {
+        return from;
+    }
+
+    /**
+     * Returns the end time of the event.
+     *
+     * @return The "to" time string.
+     */
+    public String getTo() {
+        return to;
+    }
+
+    /**
      * Returns the string representation of the Event task.
      *
      * @return A string formatted as "[E]" followed by the task details and
