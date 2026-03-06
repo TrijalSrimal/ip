@@ -44,8 +44,12 @@ public class Storage {
                 if (line.isEmpty()) {
                     continue;
                 }
-                Task task = parseTaskFromFile(line);
-                tasks.add(task);
+                try {
+                    Task task = parseTaskFromFile(line);
+                    tasks.add(task);
+                } catch (EncikException e) {
+                    System.out.println("Warning: Skipping corrupted line: " + line);
+                }
             }
             fileScanner.close();
         } catch (IOException e) {

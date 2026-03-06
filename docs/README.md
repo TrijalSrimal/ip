@@ -34,15 +34,16 @@ Now you have 1 tasks in the list.
 ### Adding a Deadline: `deadline`
 
 Adds a task with a due date.
+*Note: Dates must be in `yyyy-MM-dd` format.*
 
 Format: `deadline <description> /by <date>`
 
 Example:
 ```
-deadline return book /by Sunday
+deadline return book /by 2026-03-10
 ------------------------------------------------------------
 Got it. I've added this task:
-  [D][ ] return book (by: Sunday)
+  [D][ ] return book (by: Mar 10 2026)
 Now you have 2 tasks in the list.
 ------------------------------------------------------------
 ```
@@ -50,15 +51,16 @@ Now you have 2 tasks in the list.
 ### Adding an Event: `event`
 
 Adds a task with a start and end time.
+*Note: Dates must be in `yyyy-MM-dd` format.*
 
 Format: `event <description> /from <start> /to <end>`
 
 Example:
 ```
-event meeting /from Mon 2pm /to 4pm
+event camp /from 2026-06-01 /to 2026-06-05
 ------------------------------------------------------------
 Got it. I've added this task:
-  [E][ ] meeting (from: Mon 2pm to: 4pm)
+  [E][ ] camp (from: Jun 1 2026 to: Jun 5 2026)
 Now you have 3 tasks in the list.
 ------------------------------------------------------------
 ```
@@ -75,8 +77,8 @@ list
 ------------------------------------------------------------
 Here are the tasks in your list:
 1.[T][ ] read book
-2.[D][ ] return book (by: Sunday)
-3.[E][ ] meeting (from: Mon 2pm to: 4pm)
+2.[D][ ] return book (by: Mar 10 2026)
+3.[E][ ] camp (from: Jun 1 2026 to: Jun 5 2026)
 ------------------------------------------------------------
 ```
 
@@ -121,7 +123,7 @@ Example:
 delete 3
 ------------------------------------------------------------
 Noted. I've removed this task:
-  [E][ ] meeting (from: Mon 2pm to: 4pm)
+  [E][ ] camp (from: Jun 1 2026 to: Jun 5 2026)
 Now you have 2 tasks in the list.
 ------------------------------------------------------------
 ```
@@ -138,7 +140,7 @@ find book
 ------------------------------------------------------------
 Here are the matching tasks in your list:
 1.[T][ ] read book
-2.[D][ ] return book (by: Sunday)
+2.[D][ ] return book (by: Mar 10 2026)
 ------------------------------------------------------------
 ```
 
@@ -152,15 +154,15 @@ Format: `bye`
 
 Tasks are automatically saved to `data/encik.txt` in the same folder as the JAR file. Tasks are loaded automatically when Encik starts.
 
-> ⚠️ **Warning**: Do not manually edit the data file unless you know the correct format. Corrupted lines will be skipped during loading.
+> ⚠️ **Warning**: Do not manually edit the data file unless you know the correct format. Corrupted lines will be skipped during loading. Use `yyyy-MM-dd` for all dates in raw data.
 
 ## Command Summary
 
 | Command | Format | Example |
 |---------|--------|---------|
 | Todo | `todo <desc>` | `todo read book` |
-| Deadline | `deadline <desc> /by <date>` | `deadline essay /by Sunday` |
-| Event | `event <desc> /from <start> /to <end>` | `event meeting /from 2pm /to 4pm` |
+| Deadline | `deadline <desc> /by <date>` | `deadline essay /by 2026-03-10` |
+| Event | `event <desc> /from <start> /to <end>` | `event camp /from 2026-06-01 /to 2026-06-05` |
 | List | `list` | `list` |
 | Mark | `mark <index>` | `mark 1` |
 | Unmark | `unmark <index>` | `unmark 1` |
