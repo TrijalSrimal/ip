@@ -1,29 +1,27 @@
 # Encik User Guide
 
-Encik is a task manager chatbot that helps you track todos, deadlines, and events.
+Encik is a **command-line task manager chatbot** that helps you track todos, deadlines, and events.
 
 ## Quick Start
 
-1. Ensure you have Java 17 installed
-2. Compile: `cd src/main/java && javac *.java`
-3. Run: `java Encik`
+1. Ensure you have **Java 17** installed.
+2. Download the latest `Encik.jar` from the [Releases](https://github.com/TrijalSrimal/ip/releases) page.
+3. Copy the JAR file to an empty folder.
+4. Open a terminal, navigate to the folder, and run:
+   ```
+   java -jar Encik.jar
+   ```
+5. Type commands and press Enter. Type `bye` to exit.
 
-## Commands
+## Features
 
-| Command | Format | Example |
-|---------|--------|---------|
-| Todo | `todo <desc>` | `todo read book` |
-| Deadline | `deadline <desc> /by <date>` | `deadline essay /by Sunday` |
-| Event | `event <desc> /from <start> /to <end>` | `event meeting /from 2pm /to 4pm` |
-| List | `list` | `list` |
-| Mark | `mark <n>` | `mark 1` |
-| Unmark | `unmark <n>` | `unmark 1` |
-| Delete | `delete <n>` | `delete 3` |
-| Exit | `bye` | `bye` |
+### Adding a Todo: `todo`
 
-## Examples
+Adds a task with no specific date.
 
-### Add Todo
+Format: `todo <description>`
+
+Example:
 ```
 todo read book
 ------------------------------------------------------------
@@ -33,7 +31,13 @@ Now you have 1 tasks in the list.
 ------------------------------------------------------------
 ```
 
-### Add Deadline
+### Adding a Deadline: `deadline`
+
+Adds a task with a due date.
+
+Format: `deadline <description> /by <date>`
+
+Example:
 ```
 deadline return book /by Sunday
 ------------------------------------------------------------
@@ -43,7 +47,13 @@ Now you have 2 tasks in the list.
 ------------------------------------------------------------
 ```
 
-### Add Event
+### Adding an Event: `event`
+
+Adds a task with a start and end time.
+
+Format: `event <description> /from <start> /to <end>`
+
+Example:
 ```
 event meeting /from Mon 2pm /to 4pm
 ------------------------------------------------------------
@@ -53,7 +63,13 @@ Now you have 3 tasks in the list.
 ------------------------------------------------------------
 ```
 
-### List Tasks
+### Listing all tasks: `list`
+
+Shows all tasks currently in the list.
+
+Format: `list`
+
+Example:
 ```
 list
 ------------------------------------------------------------
@@ -64,7 +80,13 @@ Here are the tasks in your list:
 ------------------------------------------------------------
 ```
 
-### Mark/Unmark
+### Marking a task as done: `mark`
+
+Marks the specified task as done.
+
+Format: `mark <index>`
+
+Example:
 ```
 mark 1
 ------------------------------------------------------------
@@ -73,7 +95,28 @@ Nice! I've marked this task as done:
 ------------------------------------------------------------
 ```
 
-### Delete Task
+### Unmarking a task: `unmark`
+
+Marks the specified task as not done.
+
+Format: `unmark <index>`
+
+Example:
+```
+unmark 1
+------------------------------------------------------------
+OK, I've marked this task as not done yet:
+  [T][ ] read book
+------------------------------------------------------------
+```
+
+### Deleting a task: `delete`
+
+Removes the specified task from the list.
+
+Format: `delete <index>`
+
+Example:
 ```
 delete 3
 ------------------------------------------------------------
@@ -83,42 +126,44 @@ Now you have 2 tasks in the list.
 ------------------------------------------------------------
 ```
 
-## Error Handling
+### Finding tasks by keyword: `find`
 
-Encik validates all inputs and provides helpful error messages:
+Searches for tasks whose descriptions contain the given keyword (case-insensitive).
 
-### Unknown Command
-```
-blah
-------------------------------------------------------------
-OOPS!!! I'm sorry, but I don't know what that means :-(
-Available commands: todo, deadline, event, list, mark, unmark, bye
-------------------------------------------------------------
-```
+Format: `find <keyword>`
 
-### Empty Description
+Example:
 ```
-todo
+find book
 ------------------------------------------------------------
-OOPS!!! The description of a todo cannot be empty.
-Usage: todo <description>
+Here are the matching tasks in your list:
+1.[T][ ] read book
+2.[D][ ] return book (by: Sunday)
 ------------------------------------------------------------
 ```
 
-### Invalid Task Index
-```
-mark 100
-------------------------------------------------------------
-OOPS!!! Invalid task index.
-Usage: mark <index>
-------------------------------------------------------------
-```
+### Exiting the program: `bye`
 
-### Invalid Delete Index
-```
-delete 100
-------------------------------------------------------------
-OOPS!!! Invalid task index.
-Usage: delete <index>
-------------------------------------------------------------
-```
+Saves all tasks and exits the chatbot.
+
+Format: `bye`
+
+## Data Storage
+
+Tasks are automatically saved to `data/encik.txt` in the same folder as the JAR file. Tasks are loaded automatically when Encik starts.
+
+> ⚠️ **Warning**: Do not manually edit the data file unless you know the correct format. Corrupted lines will be skipped during loading.
+
+## Command Summary
+
+| Command | Format | Example |
+|---------|--------|---------|
+| Todo | `todo <desc>` | `todo read book` |
+| Deadline | `deadline <desc> /by <date>` | `deadline essay /by Sunday` |
+| Event | `event <desc> /from <start> /to <end>` | `event meeting /from 2pm /to 4pm` |
+| List | `list` | `list` |
+| Mark | `mark <index>` | `mark 1` |
+| Unmark | `unmark <index>` | `unmark 1` |
+| Delete | `delete <index>` | `delete 3` |
+| Find | `find <keyword>` | `find book` |
+| Exit | `bye` | `bye` |
