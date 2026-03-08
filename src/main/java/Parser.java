@@ -266,7 +266,7 @@ public class Parser {
         String keyword = input.substring(COMMAND_FIND.length()).trim();
         if (keyword.isEmpty()) {
             throw new EncikException(
-                    "OOPS!!! The search keyword cannot be empty.\nUsage: find <keyword>");
+                    "OOPS!!! The search keyword cannot be empty or blank.\nUsage: find <keyword>");
         }
         TaskList matchingTasks = tasks.find(keyword);
         ui.showFoundTasks(matchingTasks);
