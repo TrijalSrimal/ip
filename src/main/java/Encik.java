@@ -1,7 +1,7 @@
 import java.io.File;
 
 /**
- * Main class for Encik task manager chatbot.
+ * The main class for the Encik task manager chatbot.
  * Handles the main application flow.
  */
 public class Encik {
